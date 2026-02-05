@@ -10,7 +10,8 @@ The objective is to analyze Bitcoin market structure using:
 - Volatility (ATR)
 - Volume Profile analysis
 
-This is a research and analysis project, not a trading system.
+This is a personal first try for research and analysis project, not a trading system, and I acknowledge it can be greatly improved 🙏🏻
+ 
 
 ## 🔍 Indicators used
 - Moving Averages (50 / 200)
