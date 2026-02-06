@@ -1,6 +1,6 @@
 ## 📊 Live interactive BTC dashboard
 
-👉 View the interactive technical analysis:
+👉 View the interactive technical analysis (2026/02/06):
 https://pierre-marie-s.github.io/btc-technical-analysis/
 
 This project presents a Python-based technical analysis of Bitcoin using
