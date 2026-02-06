@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import plotly.graph_objects as go
 import talib as ta
@@ -8,7 +10,7 @@ from signal_alerts import check_and_alert_latest_signals
 
 TICKER = "BTC-USD"
 PERIOD = "1y"
-INTERVAL = "1d" 
+INTERVAL = "1d"
 VOLUME_PROFILE_BINS = 30
 
 def _to_series(data, column: str):
@@ -122,13 +124,16 @@ def build_figure(close, ma50, ma200, rsi, atr, obv, volume_profile, bin_centers)
 
 def main():
     market = fetch_market_data()
-    indicators = compute_indicators(market["close"], market["high"], market["low"], market["volume"])
+    indicators = compute_indicators(
+        market["close"], market["high"], market["low"], market["volume"]
+    )
     df_indicators = build_signal_dataframe(market["close"], indicators)
     check_and_alert_latest_signals(df_indicators)
 
     volume_profile, bin_centers = build_volume_profile(
         market["close"], market["low"], market["high"], market["volume"]
     )
+
     fig = build_figure(
         market["close"],
         indicators["ma50"],
@@ -139,8 +144,23 @@ def main():
         volume_profile,
         bin_centers,
     )
+
+    base_dir = Path(__file__).resolve().parent.parent
+    report_dir = base_dir / "report"
+    report_dir.mkdir(exist_ok=True)
+
+    output_file = report_dir / "index.html"
+
+    fig.write_html(
+        output_file,
+        include_plotlyjs="cdn",
+        full_html=True,
+    )
+
+    print(f"Report generated at: {output_file}")
+
     fig.show()
+
 
 if __name__ == "__main__":
     main()
-
