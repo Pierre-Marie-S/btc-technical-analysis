@@ -61,20 +61,35 @@ def build_volume_profile(close, low, high, volume, num_bins: int = VOLUME_PROFIL
     return volume_profile, bin_centers
 
 
-def build_figure(close, ma50, ma200, volume_profile, bin_centers):
+def build_figure(close, ma50, ma200, rsi, atr, obv, volume_profile, bin_centers):
     fig = make_subplots(
-        rows=1,
+        rows=4,
         cols=2,
         shared_yaxes=False,
         horizontal_spacing=0.04,
         column_widths=[0.7, 0.3],
-        specs=[[{"type": "xy"}, {"type": "xy"}]],
-        subplot_titles=("Prix BTC + MA50/MA200", "Volume Profile"),
+        row_heights=[0.5, 0.16, 0.16, 0.18],
+        specs=[
+            [{"type": "xy"}, {"type": "xy"}],
+            [{"type": "xy"}, None],
+            [{"type": "xy"}, None],
+            [{"type": "xy"}, None],
+        ],
+        subplot_titles=(
+            "Prix BTC + MA50/MA200 (log)",
+            "Volume Profile",
+            "RSI (14)",
+            "ATR (14)",
+            "OBV",
+        ),
     )
 
     fig.add_trace(go.Scatter(x=close.index, y=close.values, mode="lines", name="BTC Close"), row=1, col=1)
     fig.add_trace(go.Scatter(x=close.index, y=ma50, mode="lines", name="MA 50"), row=1, col=1)
     fig.add_trace(go.Scatter(x=close.index, y=ma200, mode="lines", name="MA 200"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=close.index, y=rsi, mode="lines", name="RSI 14"), row=2, col=1)
+    fig.add_trace(go.Scatter(x=close.index, y=atr, mode="lines", name="ATR 14"), row=3, col=1)
+    fig.add_trace(go.Scatter(x=close.index, y=obv, mode="lines", name="OBV"), row=4, col=1)
     fig.add_trace(
         go.Bar(
             x=volume_profile,
@@ -89,16 +104,19 @@ def build_figure(close, ma50, ma200, volume_profile, bin_centers):
         col=2,
     )
     fig.update_layout(
-        title="Bitcoin (1y): Prix + MA50/MA200 avec Volume Profile",
+        title="Bitcoin (1y): Price + MA50/MA200 (log) + Volume Profile",
         template="plotly_white",
         legend=dict(x=0.01, y=0.99),
         hovermode="x",
     )
     fig.update_xaxes(dtick="M1", tickformat="%b %Y", hoverformat="%d %b %Y", row=1, col=1)
-    fig.update_xaxes(title_text="Date", row=1, col=1)
+    fig.update_xaxes(title_text="Date", row=4, col=1)
     fig.update_xaxes(title_text="Volume", row=1, col=2)
-    fig.update_yaxes(title_text="Price (USD)", row=1, col=1)
+    fig.update_yaxes(title_text="Price (USD)", row=1, col=1, type="log")
     fig.update_yaxes(title_text="Price (USD)", row=1, col=2)
+    fig.update_yaxes(title_text="RSI", row=2, col=1, range=[0, 100])
+    fig.update_yaxes(title_text="ATR", row=3, col=1)
+    fig.update_yaxes(title_text="OBV", row=4, col=1)
     return fig
 
 
@@ -112,10 +130,17 @@ def main():
         market["close"], market["low"], market["high"], market["volume"]
     )
     fig = build_figure(
-        market["close"], indicators["ma50"], indicators["ma200"], volume_profile, bin_centers
+        market["close"],
+        indicators["ma50"],
+        indicators["ma200"],
+        indicators["rsi"],
+        indicators["atr"],
+        indicators["obv"],
+        volume_profile,
+        bin_centers,
     )
     fig.show()
 
-
 if __name__ == "__main__":
     main()
+
