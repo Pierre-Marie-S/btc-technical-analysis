@@ -1,4 +1,7 @@
-# btc-technical-analysis
+## 📊 Live interactive BTC dashboard
+
+👉 View the interactive technical analysis:
+https://pierre-marie-s.github.io/btc-technical-analysis/
 
 This project presents a Python-based technical analysis of Bitcoin using
 TA-Lib indicators and volume-based analytics.
